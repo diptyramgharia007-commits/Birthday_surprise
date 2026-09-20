@@ -632,6 +632,10 @@ button:hover {
 
 
 <body>
+   
+    <audio id="bgMusic" loop>
+    <source src="audio.mpeg" type="audio/mpeg">
+    </audio>
 
 
 <!-- =========================
@@ -894,6 +898,15 @@ function openGift() {
 
     gift.classList.add("open");
 
+    const music = document.getElementById("bgMusic");
+
+    if(music){
+       music.volume = 0.5;
+
+       music.play().catch(function(error){
+           console.log("Music Could not start:",error);
+       });
+     }
 
     setTimeout(() => {
 
