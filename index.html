@@ -223,6 +223,34 @@ body {
    BIRTHDAY SECTION
 ========================= */
 
+/* Smooth Birthday Screen Entrance */
+#birthday {
+    display: none;
+    opacity: 0;
+    transform: scale(0.92);
+}
+
+#birthday.showBirthday {
+    display: block;
+    animation: birthdayEntrance 1.5s ease-out forwards;
+}
+
+@keyframes birthdayEntrance {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    60% {
+        opacity: 1;
+        transform: scale(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 #birthday {
     display: none;
     min-height: 100vh;
@@ -898,38 +926,121 @@ createStars();
 
 function openGift() {
 
-    const gift =
-        document.querySelector(".gift");
+    const gift = document.querySelector(".gift");
+
+    // Prevent clicking multiple times
+    if (gift.classList.contains("open")) {
+        return;
+    }
 
     gift.classList.add("open");
 
+    // Play music
     const music = document.getElementById("bgMusic");
 
-    if(music){
-       music.volume = 0.5;
+    if (music) {
+        music.volume = 0.5;
 
-       music.play().catch(function(error){
-           console.log("Music Could not start:",error);
-       });
-     }
+        music.play().catch(function(error) {
+            console.log("Music could not start:", error);
+        });
+    }
 
+    // Create magic particles
+    createGiftParticles();
+
+    // Wait for the animation
     setTimeout(() => {
 
         document.getElementById("startScreen")
             .style.display = "none";
 
-        document.getElementById("birthday")
-            .style.display = "block";
-
-
+        document.getElementById("birthday").classList.add("showBirthday");
         startHearts();
-
         startBalloons();
-
         createConfetti();
 
-    }, 1000);
+    }, 1600);
 }
+
+
+/* =========================
+   GIFT MAGIC PARTICLES
+========================= */
+
+function createGiftParticles() {
+
+    const gift = document.querySelector(".gift");
+
+    const rect = gift.getBoundingClientRect();
+
+    for (let i = 0; i < 35; i++) {
+
+        const particle =
+            document.createElement("div");
+
+        particle.innerHTML =
+            ["✨", "💖", "⭐", "💕", "🌟"]
+            [Math.floor(Math.random() * 5)];
+
+        particle.style.position = "fixed";
+
+        particle.style.left =
+            (rect.left + rect.width / 2) + "px";
+
+        particle.style.top =
+            (rect.top + rect.height / 2) + "px";
+
+        particle.style.fontSize =
+            (12 + Math.random() * 25) + "px";
+
+        particle.style.pointerEvents = "none";
+
+        particle.style.zIndex = "100";
+
+        document.body.appendChild(particle);
+
+        const angle =
+            Math.random() * Math.PI * 2;
+
+        const distance =
+            100 + Math.random() * 180;
+
+        const x =
+            Math.cos(angle) * distance;
+
+        const y =
+            Math.sin(angle) * distance;
+
+        particle.animate(
+            [
+                {
+                    transform: "translate(-50%, -50%) scale(0)",
+                    opacity: 0
+                },
+                {
+                    transform:
+                        `translate(${x * 0.5}px, ${y * 0.5}px) scale(1.5)`,
+                    opacity: 1
+                },
+                {
+                    transform:
+                        `translate(${x}px, ${y}px) scale(0.3)`,
+                    opacity: 0
+                }
+            ],
+            {
+                duration: 1400,
+                easing: "cubic-bezier(.17,.67,.35,1)"
+            }
+        );
+
+        setTimeout(() => {
+            particle.remove();
+        }, 1500);
+    }
+}
+
 
 
 
